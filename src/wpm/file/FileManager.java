@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javafx.collections.ObservableList;
@@ -217,9 +218,39 @@ public class FileManager implements AppFileComponent {
     @Override
     public void exportData(AppDataComponent data, String filePath) throws IOException {
 	System.out.println("THIS SHOULD EXPORT THE WEB PAGE TO THE temp DIRECTORY, INCLUDING THE CSS FILE");
-        PrintWriter out = new PrintWriter(filePath);
-	out.print(data);
-	out.close();
+        StringWriter sw = new StringWriter();
+
+	// BUILD THE HTMLTags ARRAY
+	DataManager dataManager = (DataManager)data;
+
+	// THEN THE TREE
+	JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+	TreeItem root = dataManager.getHTMLRoot();
+	fillArrayWithTreeTags(root, arrayBuilder);
+	JsonArray nodesArray = arrayBuilder.build();
+	
+	// THEN PUT IT ALL TOGETHER IN A JsonObject
+	JsonObject dataManagerJSO = Json.createObjectBuilder()
+		.add(JSON_TAG_TREE, nodesArray)
+		.add(JSON_CSS_CONTENT, dataManager.getCSSText())
+		.build();
+	
+	// AND NOW OUTPUT IT TO A JSON FILE WITH PRETTY PRINTING
+	Map<String, Object> properties = new HashMap<>(1);
+	properties.put(JsonGenerator.PRETTY_PRINTING, true);
+	JsonWriterFactory writerFactory = Json.createWriterFactory(properties);
+	JsonWriter jsonWriter = writerFactory.createWriter(sw);
+	jsonWriter.writeObject(dataManagerJSO);
+	jsonWriter.close();
+
+	// INIT THE WRITER
+	OutputStream os = new FileOutputStream(filePath);
+	JsonWriter jsonFileWriter = Json.createWriter(os);
+	jsonFileWriter.writeObject(dataManagerJSO);
+	String prettyPrinted = sw.toString();
+	PrintWriter pw = new PrintWriter(filePath);
+	pw.write(prettyPrinted);
+	pw.close();
     }
     
     /**

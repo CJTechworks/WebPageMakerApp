@@ -3,6 +3,9 @@ package wpm.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.web.WebEngine;
@@ -170,7 +173,25 @@ public class PageEditController {
             
                // Prevent Removal of Basic Elements
             if(!basicElementList.contains(selectedTag.getTagName())){
-                selectedItem.getParent().getChildren().clear();
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Dialog");
+                alert.setHeaderText("Look, a Confirmation Dialog");
+                alert.setContentText("Are you ok with this?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK){
+                    selectedItem.getParent().getChildren().clear();
+                } else {
+                    // do nothing
+                }
+                
+            }
+            else{
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText("Error");
+                alert.setContentText("can't delete the basic html elements!");
+                alert.showAndWait();
             }
             
 
