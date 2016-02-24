@@ -58,3 +58,7 @@
 .prompt_text_field {
     -fx-font-size: 13pt;
 }
+
+.bordered_pane {
+    -fx-background-color:"#00bfff";
+}
