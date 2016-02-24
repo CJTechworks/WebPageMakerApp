@@ -307,7 +307,7 @@ public class Workspace extends AppWorkspaceComponent {
 	for (Button b : tagButtons) {
 	    b.getStyleClass().add(CLASS_TAG_BUTTON);
 	}
-	//leftPane.getStyleClass().add(CLASS_MAX_PANE);
+	leftPane.getStyleClass().add(CLASS_MAX_PANE);
 	treeScrollPane.getStyleClass().add(CLASS_MAX_PANE);
 	tagEditorLabel.getStyleClass().add(CLASS_HEADING_LABEL);
     }
