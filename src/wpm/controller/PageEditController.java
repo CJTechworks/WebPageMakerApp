@@ -9,6 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.web.WebEngine;
+import javax.swing.JOptionPane;
 import properties_manager.PropertiesManager;
 import saf.ui.AppMessageDialogSingleton;
 import static wpm.PropertyType.ADD_ELEMENT_ERROR_MESSAGE;
@@ -120,11 +121,9 @@ public class PageEditController {
 	    HTMLTagPrototype newTag = element.clone();
 	    TreeItem newNode = new TreeItem(newTag);
             
-           // if(selectedTag.isLegalParent(newTag.getTagName())){
-               
-          
-
-	    // ADD THE NEW NODE
+             if(element.isLegalParent(selectedTag.getTagName()))
+           {
+                // ADD THE NEW NODE
 	    selectedItem.getChildren().add(newNode);
 
 	    // SELECT THE NEW NODE
@@ -145,6 +144,17 @@ public class PageEditController {
 		AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
 		dialog.show(props.getProperty(ADD_ELEMENT_ERROR_TITLE), props.getProperty(ADD_ELEMENT_ERROR_MESSAGE));
 	    }
+           }
+          else
+           {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText("Error");
+                alert.setContentText("selected tag not legal parent of this element!"+element.getTagName());
+                alert.showAndWait();
+           }
+
+	   
 	}
     }
     
@@ -221,7 +231,10 @@ public class PageEditController {
      *
      */
     public void handleCSSEditing(String cssContent) {
+        System.out.println("inside handleCSSEditing");
+        this.enable(true);
 	if (enabled) {
+            System.out.println("inside handleCSSEditing cssContent:"+cssContent);
 	    try {
 		// MAKE SURE THE DATA MANAGER GETS THE CSS TEXT
 		DataManager dataManager = (DataManager) app.getDataComponent();
