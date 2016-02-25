@@ -9,7 +9,10 @@ import saf.ui.AppMessageDialogSingleton;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -21,6 +24,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -33,6 +38,8 @@ import saf.ui.AppGUI;
 import wpm.data.HTMLTagPrototype;
 import saf.AppTemplate;
 import saf.components.AppWorkspaceComponent;
+import static saf.settings.AppStartupConstants.FILE_PROTOCOL;
+import static saf.settings.AppStartupConstants.PATH_IMAGES;
 import wpm.PropertyType;
 import static wpm.PropertyType.TEMP_PAGE_LOAD_ERROR_MESSAGE;
 import static wpm.PropertyType.TEMP_PAGE_LOAD_ERROR_TITLE;
@@ -159,8 +166,15 @@ public class Workspace extends AppWorkspaceComponent {
 	htmlTree.setRoot(htmlRoot);
 	dataManager.setHTMLRoot(htmlRoot);
 	dataManager.reset();
-        
-            Button deleteButton = new Button("X");
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+            Button deleteButton = new Button();
+            String imagePath = FILE_PROTOCOL + PATH_IMAGES + props.getProperty("DELETE_ICON");
+            Image buttonImage = new Image(imagePath);
+	
+            // NOW MAKE THE BUTTON
+            
+           // deleteButton.setDisable(disabled);
+            deleteButton.setGraphic(new ImageView(buttonImage));
 	    tagButtons.add(deleteButton);
 	    deleteButton.setMaxWidth(BUTTON_TAG_WIDTH);
 	    deleteButton.setMinWidth(BUTTON_TAG_WIDTH);
@@ -337,6 +351,26 @@ public class Workspace extends AppWorkspaceComponent {
 		HTMLTagPrototype selectedTag = (HTMLTagPrototype) selectedItem.getValue();
 		HashMap<String, String> attributes = selectedTag.getAttributes();
 		Collection<String> keys = attributes.keySet();
+                
+                // code to enable only legal child and disable legal parents
+                List<String> legalParentsList = selectedTag.getLegalParents();
+                
+                for(String legalParent : legalParentsList){
+                    System.out.println("legalParent:"+legalParent);
+                }
+               // enable all the buttons 
+                for(Button tagButton : tagButtons){
+                    tagButton.setDisable(false);
+                }
+                // disable only the legal parent
+                for(Button tagButton : tagButtons){
+                    System.out.println(tagButton.getText());
+                    if(legalParentsList.contains(tagButton.getText())){
+                        tagButton.setDisable(true);
+                    }
+                    
+                }
+                
 		int row = 1;
 		for (String attributeName : keys) {
 		    String attributeValue = selectedTag.getAttribute(attributeName);

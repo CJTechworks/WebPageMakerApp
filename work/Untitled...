@@ -69,48 +69,24 @@
             "parent_index":0
         },
         {
-            "tag":"Text",
-            "has_closing_tag":false,
+            "tag":"a",
+            "has_closing_tag":true,
             "legal_parents":[
-                "a",
                 "body",
                 "div",
                 "li",
                 "p",
-                "td",
-                "title"
+                "td"
             ],
             "attributes":[
                 {
-                    "attribute_name":"text",
+                    "attribute_name":"href",
                     "attribute_value":""
                 }
             ],
-            "number_of_children":1,
+            "number_of_children":0,
             "node_index":5,
             "parent_index":4
-        },
-        {
-            "tag":"Text",
-            "has_closing_tag":false,
-            "legal_parents":[
-                "a",
-                "body",
-                "div",
-                "li",
-                "p",
-                "td",
-                "title"
-            ],
-            "attributes":[
-                {
-                    "attribute_name":"text",
-                    "attribute_value":"sdasdad"
-                }
-            ],
-            "number_of_children":0,
-            "node_index":6,
-            "parent_index":5
         }
     ],
     "css_content":""
