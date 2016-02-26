@@ -304,41 +304,6 @@ public class FileManager implements AppFileComponent {
         return tagWithAttributes.toString();
     }
     
-   /* @Override
-    public void exportData(AppDataComponent data, String filePath) throws IOException {
-
-        DataManager dataManager = (DataManager) data;
-        PrintWriter out = new PrintWriter(filePath);
-
-        writeChildren(dataManager.getHTMLRoot(), out);
-        out.println("</body>");
-        out.println("</html>");
-
-        out.close();
-
-    }
-
-    private void writeChildren(TreeItem root, PrintWriter out) {
-        out.println(root.getValue());
-        for (Object child : root.getChildren()) {
-            if (((TreeItem) child).getChildren().isEmpty()) {
-                Object tagObj = ((TreeItem) child).getValue();
-                HTMLTagPrototype htmlTag = (HTMLTagPrototype) tagObj;
-                if (htmlTag.getTagName().equals("link")) {
-                    System.out.println("hi");
-                    out.println("<link rel='stylesheet' type='text/css' href='./css/home.css'>");
-                } else {
-                    out.println(((TreeItem) child).getValue() + "charles");
-                }
-
-            } else {
-                writeChildren(((TreeItem) child), out);
-            }
-        }
-    }*/
-    
-    
-    
     /**
      * This function writes the CSS content out to the CSS file
      * that is found using the filePath argument.
