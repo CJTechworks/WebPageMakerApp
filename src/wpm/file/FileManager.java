@@ -59,7 +59,7 @@ public class FileManager implements AppFileComponent {
     // THIS IS THE TEMP PAGE FOR OUR SITE
     public static final String INDEX_FILE = "index.html";
     public static final String CSS_FILE = "home.css";
-    public static final String PATH_CSS = "./temp/";
+    public static final String PATH_CSS = "./temp/css/";
     public static final String TEMP_CSS_PATH = PATH_CSS + CSS_FILE;
     public static final String PATH_TEMP = "./temp/";
     public static final String TEMP_PAGE = PATH_TEMP + INDEX_FILE;
