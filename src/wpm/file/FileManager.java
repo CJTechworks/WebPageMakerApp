@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -225,24 +226,22 @@ public class FileManager implements AppFileComponent {
         TreeItem treeItem = dataManager.getHTMLRoot();
         
         htmlMarkup.append(treeItem.getValue());
-        System.out.println("treeItem :"+treeItem.getValue());
-
+        System.out.println("html root :"+treeItem.getValue());
+        // get all the children from root
         ObservableList<TreeItem> childrenList = treeItem.getChildren();
         List<Object> tagList  = new ArrayList<Object>();
-        for(TreeItem treeItem1 : childrenList){
-            System.out.println("treeItem1" +treeItem1.getValue());
-
-            htmlMarkup.append(treeItem1.getValue());
-            
-            addChildrenToHtml(treeItem1,htmlMarkup);
-             tagList.add(0,treeItem1.getValue());
+        for(TreeItem childTreeItem : childrenList){
+            System.out.println("childTreeItem" +childTreeItem.getValue());
+            HTMLTagPrototype childHtmlNode = (HTMLTagPrototype)childTreeItem.getValue();
+            htmlMarkup.append(childHtmlNode);
+            addChildrenToHtml(childTreeItem,htmlMarkup);
+             //tagList.add(0,childTreeItem.getValue());
         }
         
-        for(Object endtag : tagList){
+        /*for(Object endtag : tagList){
             System.out.println("end tag:" +endtag);
-            
             htmlMarkup.append(endtag.toString().replace("<", "</"));
-        }
+        }*/
         htmlMarkup.append(treeItem.getValue());
         System.out.println("htmlMarkup"+htmlMarkup);
         
@@ -254,26 +253,91 @@ public class FileManager implements AppFileComponent {
         
     }
     
-    private void addChildrenToHtml(TreeItem node, StringBuilder htmlMarkup) {
-	HTMLTagPrototype parentData = (HTMLTagPrototype)node.getValue();
+    private void addChildrenToHtml(TreeItem childTree, StringBuilder htmlMarkup) {
+        
+        HTMLTagPrototype childHtmlNode = (HTMLTagPrototype)childTree.getValue();
+       // htmlMarkup.append(childHtmlNode);
 	// AND NOW GO THROUGH THE CHILDREN
-	ObservableList<TreeItem> children = node.getChildren();
+	ObservableList<TreeItem> children = childTree.getChildren();
 	for (TreeItem child : children) {
 	    HTMLTagPrototype childData = (HTMLTagPrototype)child.getValue();
-	    childData.setParentIndex(parentData.getNodeIndex());
-	    childData.setNodeIndex(maxNodeCounter);
-	    maxNodeCounter++;
+	    
             System.out.println("childData.getAttributes()"+childData.getAttributes());
+            if(childData.getAttributes()!= null || !childData.getAttributes().isEmpty()){
+                System.out.println("Line 239 :"+ "<"+childData.getTagName() + getTagWithAttributes(childData.getAttributes()));
+                htmlMarkup.append("<"+childData.getTagName() + getTagWithAttributes(childData.getAttributes())+">");
+            }
+            else{
+                htmlMarkup.append(childData);
+            }
             
             if(childData.getAttributes().get("text") != null){
                 htmlMarkup.append(childData.getAttributes().get("text"));
-
             }
-
 	    // AND NOW MAKE THE RECURSIVE CALL ON THE CHILDREN
 	    addChildrenToHtml(child, htmlMarkup);
 	}
+        if(childHtmlNode.hasClosingTag()){
+            htmlMarkup.append("</"+childHtmlNode.getTagName()+">");
+        }
     }
+    
+    public String setdoubleQuote(String myText) {
+        String quoteText = "";
+        if (!myText.isEmpty()) {
+            quoteText = "\"" + myText + "\"";
+        }
+        return quoteText;
+    }
+    
+    
+    public String getTagWithAttributes(Map attributesMap) {
+    Iterator it = attributesMap.entrySet().iterator();
+    StringBuilder tagWithAttributes = new StringBuilder();
+    while (it.hasNext()) {
+        Map.Entry pair = (Map.Entry)it.next();
+        System.out.println(pair.getKey() + " = " + pair.getValue());
+        if(pair.getValue() != null && !pair.getValue().equals("")){
+            tagWithAttributes.append(" "+pair.getKey() + " = " +setdoubleQuote(pair.getValue().toString()) +" ");
+        }
+    }
+        return tagWithAttributes.toString();
+    }
+    
+   /* @Override
+    public void exportData(AppDataComponent data, String filePath) throws IOException {
+
+        DataManager dataManager = (DataManager) data;
+        PrintWriter out = new PrintWriter(filePath);
+
+        writeChildren(dataManager.getHTMLRoot(), out);
+        out.println("</body>");
+        out.println("</html>");
+
+        out.close();
+
+    }
+
+    private void writeChildren(TreeItem root, PrintWriter out) {
+        out.println(root.getValue());
+        for (Object child : root.getChildren()) {
+            if (((TreeItem) child).getChildren().isEmpty()) {
+                Object tagObj = ((TreeItem) child).getValue();
+                HTMLTagPrototype htmlTag = (HTMLTagPrototype) tagObj;
+                if (htmlTag.getTagName().equals("link")) {
+                    System.out.println("hi");
+                    out.println("<link rel='stylesheet' type='text/css' href='./css/home.css'>");
+                } else {
+                    out.println(((TreeItem) child).getValue() + "charles");
+                }
+
+            } else {
+                writeChildren(((TreeItem) child), out);
+            }
+        }
+    }*/
+    
+    
     
     /**
      * This function writes the CSS content out to the CSS file
