@@ -231,13 +231,11 @@ public class FileManager implements AppFileComponent {
         List<Object> tagList  = new ArrayList<Object>();
         for(TreeItem treeItem1 : childrenList){
             System.out.println("treeItem1" +treeItem1.getValue());
+
             htmlMarkup.append(treeItem1.getValue());
             
-            if(treeItem1.getValue().toString().equals("<body>")){
-                htmlMarkup.append("test message");
-            }
-            
-            tagList.add(0,treeItem1.getValue());
+            addChildrenToHtml(treeItem1,htmlMarkup);
+             tagList.add(0,treeItem1.getValue());
         }
         
         for(Object endtag : tagList){
@@ -254,6 +252,27 @@ public class FileManager implements AppFileComponent {
        
         
         
+    }
+    
+    private void addChildrenToHtml(TreeItem node, StringBuilder htmlMarkup) {
+	HTMLTagPrototype parentData = (HTMLTagPrototype)node.getValue();
+	// AND NOW GO THROUGH THE CHILDREN
+	ObservableList<TreeItem> children = node.getChildren();
+	for (TreeItem child : children) {
+	    HTMLTagPrototype childData = (HTMLTagPrototype)child.getValue();
+	    childData.setParentIndex(parentData.getNodeIndex());
+	    childData.setNodeIndex(maxNodeCounter);
+	    maxNodeCounter++;
+            System.out.println("childData.getAttributes()"+childData.getAttributes());
+            
+            if(childData.getAttributes().get("text") != null){
+                htmlMarkup.append(childData.getAttributes().get("text"));
+
+            }
+
+	    // AND NOW MAKE THE RECURSIVE CALL ON THE CHILDREN
+	    addChildrenToHtml(child, htmlMarkup);
+	}
     }
     
     /**
