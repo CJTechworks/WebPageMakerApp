@@ -218,39 +218,38 @@ public class FileManager implements AppFileComponent {
     @Override
     public void exportData(AppDataComponent data, String filePath) throws IOException {
 	System.out.println("THIS SHOULD EXPORT THE WEB PAGE TO THE temp DIRECTORY, INCLUDING THE CSS FILE");
-        StringWriter sw = new StringWriter();
+        
+        StringBuilder htmlMarkup = new StringBuilder();
+        
+        DataManager dataManager = (DataManager)data;
+        TreeItem treeItem = dataManager.getHTMLRoot();
+        
+        htmlMarkup.append(treeItem.getValue());
+        System.out.println("treeItem :"+treeItem.getValue());
 
-	// BUILD THE HTMLTags ARRAY
-	DataManager dataManager = (DataManager)data;
-
-	// THEN THE TREE
-	JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-	TreeItem root = dataManager.getHTMLRoot();
-	fillArrayWithTreeTags(root, arrayBuilder);
-	JsonArray nodesArray = arrayBuilder.build();
-	
-	// THEN PUT IT ALL TOGETHER IN A JsonObject
-	JsonObject dataManagerJSO = Json.createObjectBuilder()
-		.add(JSON_TAG_TREE, nodesArray)
-		.add(JSON_CSS_CONTENT, dataManager.getCSSText())
-		.build();
-	
-	// AND NOW OUTPUT IT TO A JSON FILE WITH PRETTY PRINTING
-	Map<String, Object> properties = new HashMap<>(1);
-	properties.put(JsonGenerator.PRETTY_PRINTING, true);
-	JsonWriterFactory writerFactory = Json.createWriterFactory(properties);
-	JsonWriter jsonWriter = writerFactory.createWriter(sw);
-	jsonWriter.writeObject(dataManagerJSO);
-	jsonWriter.close();
-
-	// INIT THE WRITER
-	OutputStream os = new FileOutputStream(filePath);
-	JsonWriter jsonFileWriter = Json.createWriter(os);
-	jsonFileWriter.writeObject(dataManagerJSO);
-	String prettyPrinted = sw.toString();
-	PrintWriter pw = new PrintWriter(filePath);
-	pw.write(prettyPrinted);
-	pw.close();
+        ObservableList<TreeItem> childrenList = treeItem.getChildren();
+        List<Object> tagList  = new ArrayList<Object>();
+        for(TreeItem treeItem1 : childrenList){
+            System.out.println("treeItem1" +treeItem1.getValue());
+            htmlMarkup.append(treeItem1.getValue());
+            
+            tagList.add(0,treeItem1.getValue());
+        }
+        
+        for(Object endtag : tagList){
+            System.out.println("end tag:" +endtag);
+            
+            htmlMarkup.append(endtag.toString().replace("<", "</"));
+        }
+        htmlMarkup.append(treeItem.getValue());
+        System.out.println("htmlMarkup"+htmlMarkup);
+        
+        PrintWriter out = new PrintWriter(filePath);
+	out.print(htmlMarkup);
+	out.close();
+       
+        
+        
     }
     
     /**
@@ -265,6 +264,9 @@ public class FileManager implements AppFileComponent {
      * to the CSS File.
      */
     public void exportCSS(String cssContent, String filePath) throws IOException {
+        System.out.println("cssContent:"+cssContent);
+        System.out.println("file path :"+filePath);
+       
 	PrintWriter out = new PrintWriter(filePath);
 	out.print(cssContent);
 	out.close();
