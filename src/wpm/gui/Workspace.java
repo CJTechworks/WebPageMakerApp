@@ -225,6 +225,7 @@ public class Workspace extends AppWorkspaceComponent {
 	rightPane = new TabPane();
 	htmlView = new WebView();
 	htmlEngine = htmlView.getEngine();
+       
 	cssEditor = new TextArea();
 
 	// PUT BOTH ITEMS IN THE TAB PANE
@@ -235,12 +236,17 @@ public class Workspace extends AppWorkspaceComponent {
 	// NOW FOR THE CSS
 	Tab cssTab = new Tab();
 	cssTab.setText("CSS");
+   
 	cssTab.setContent(cssEditor);
 	rightPane.getTabs().add(htmlTab);
 	rightPane.getTabs().add(cssTab);
 
 	// SETUP THE RESPONSE TO CSS EDITING
 	cssEditor.textProperty().addListener(e -> {
+            System.out.println("cssEditor.getId()"+cssEditor.getId());
+            System.out.println("cssEditor.getText()"+cssEditor.getText());
+            System.out.println("cssEditor.getStyle()"+cssEditor.getStyle());
+            
 	    pageEditController.handleCSSEditing(cssEditor.getText());
 	});
 
@@ -395,6 +401,9 @@ public class Workspace extends AppWorkspaceComponent {
 	    // THEN FORCE THE CHANGES TO THE TEMP HTML PAGE
 	    FileManager fileManager = (FileManager) app.getFileComponent();
 	    fileManager.exportData(dataManager, TEMP_PAGE);
+            
+            // load the page whenever there is change
+            loadTempPage();
 
 	    // WE DON'T WANT TO RESPOND TO EVENTS FORCED BY
 	    // OUR INITIALIZATION SELECTIONS

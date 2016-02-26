@@ -58,7 +58,7 @@ public class FileManager implements AppFileComponent {
     // THIS IS THE TEMP PAGE FOR OUR SITE
     public static final String INDEX_FILE = "index.html";
     public static final String CSS_FILE = "home.css";
-    public static final String PATH_CSS = "./temp/css/";
+    public static final String PATH_CSS = "./temp/";
     public static final String TEMP_CSS_PATH = PATH_CSS + CSS_FILE;
     public static final String PATH_TEMP = "./temp/";
     public static final String TEMP_PAGE = PATH_TEMP + INDEX_FILE;
@@ -232,6 +232,10 @@ public class FileManager implements AppFileComponent {
         for(TreeItem treeItem1 : childrenList){
             System.out.println("treeItem1" +treeItem1.getValue());
             htmlMarkup.append(treeItem1.getValue());
+            
+            if(treeItem1.getValue().toString().equals("<body>")){
+                htmlMarkup.append("test message");
+            }
             
             tagList.add(0,treeItem1.getValue());
         }
